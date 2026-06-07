@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "SU65551RAW": {
+      "display_name": "SU65551 RAW Housing",
+      "ocr_tokens": ["SU65551", "65551"],
+      "shape_class": "SU65551RAW",
+      "description": "Raw housing variant A"
+    },
+    "SU66072RAW": {
+      "display_name": "SUG6072 Fan Housing",
+      "ocr_tokens": ["SUG6072", "SU66072", "6072", "FAN"],
+      "shape_class": "SU66072RAW",
+      "description": "Fan housing variant B"
+    },
+    "SU61856": {
+      "display_name": "SUG1856 Bell Housing",
+      "ocr_tokens": ["SUG1856", "SU61856", "1856"],
+      "shape_class": "SU61856",
+      "description": "Bell housing variant C"
+    },
+    "SU61855": {
+      "display_name": "DSU61855 Bell Housing",
+      "ocr_tokens": ["DSU61855", "SU61855", "61855"],
+      "shape_class": "SU61855",
+      "description": "Bell housing variant D"
+    }
+  },
+  "common_noise_tokens": ["SRF", "INDIA", "JD", "CCBCCE", "GH40121"],
+  "version": "1.0.0"
+}
