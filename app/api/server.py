@@ -67,21 +67,22 @@ async def inspect(file: UploadFile = File(...)):
 
     t0 = time.perf_counter()
 
-    try:
-        ocr_result = await asyncio.to_thread(run_ocr, image_bytes)
-        logger.info("OCR: %s", ocr_result)
-    except Exception as e:
-        logger.exception("OCR failed")
-        raise HTTPException(status_code=500, detail=f"OCR error: {e}")
+    ocr_task = asyncio.to_thread(run_ocr, image_bytes)
+    det_task = asyncio.to_thread(run_detection, image_bytes)
+    results = await asyncio.gather(ocr_task, det_task, return_exceptions=True)
 
-    try:
-        det_result = await asyncio.to_thread(run_detection, image_bytes)
-        logger.info("Detection: %s", det_result)
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=503, detail=str(e))
-    except Exception as e:
-        logger.exception("Detection failed")
-        raise HTTPException(status_code=500, detail=f"Detection error: {e}")
+    ocr_result, det_result = results[0], results[1]
+
+    if isinstance(ocr_result, Exception):
+        logger.exception("OCR failed: %s", ocr_result)
+        raise HTTPException(status_code=500, detail="OCR processing failed.")
+
+    if isinstance(det_result, FileNotFoundError):
+        raise HTTPException(status_code=503, detail="Model not found. Train the detector first.")
+
+    if isinstance(det_result, Exception):
+        logger.exception("Detection failed: %s", det_result)
+        raise HTTPException(status_code=500, detail="Detection processing failed.")
 
     verification = verify(ocr_result, det_result)
     elapsed_ms = round((time.perf_counter() - t0) * 1000, 1)
