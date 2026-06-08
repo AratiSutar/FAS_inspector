@@ -2,13 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# System dependencies for OpenCV and PaddleOCR
+# System dependencies for OpenCV, PaddleOCR and healthcheck
 RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender-dev \
     libgomp1 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
