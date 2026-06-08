@@ -10,8 +10,14 @@ from app.detector.shape_detector import DetectionResult
 
 logger = logging.getLogger(__name__)
 
-with open(settings.variant_map_path) as f:
-    _VARIANT_MAP = json.load(f)
+try:
+    with open(settings.variant_map_path) as f:
+        _VARIANT_MAP = json.load(f)
+except FileNotFoundError:
+    raise RuntimeError(
+        f"variant_map.json not found at {settings.variant_map_path}. "
+        f"Make sure config/variant_map.json exists."
+    )
 
 
 class VerificationStatus(str, Enum):

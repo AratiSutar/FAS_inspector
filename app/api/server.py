@@ -39,16 +39,14 @@ async def health():
 
 @app.get("/variants", tags=["system"])
 async def list_variants():
-    import json
-    with open(settings.variant_map_path) as f:
-        data = json.load(f)
+    from app.ocr.engine import _VARIANT_MAP
     return {
         k: {
             "display_name": v["display_name"],
             "ocr_tokens": v["ocr_tokens"],
             "shape_class": v["shape_class"],
         }
-        for k, v in data["variants"].items()
+        for k, v in _VARIANT_MAP["variants"].items()
     }
 
 

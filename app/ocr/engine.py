@@ -3,15 +3,20 @@ import json
 import logging
 from typing import Optional
 
-import numpy as np
-
 from config.settings import settings
 from app.ocr.preprocessing import preprocess_for_ocr, load_image
 
 logger = logging.getLogger(__name__)
 
-with open(settings.variant_map_path) as f:
-    _VARIANT_MAP = json.load(f)
+# Load variant map once at startup with clear error
+try:
+    with open(settings.variant_map_path) as f:
+        _VARIANT_MAP = json.load(f)
+except FileNotFoundError:
+    raise RuntimeError(
+        f"variant_map.json not found at {settings.variant_map_path}. "
+        f"Make sure config/variant_map.json exists."
+    )
 
 _TOKEN_RULES: list[tuple[re.Pattern, str, int]] = []
 for variant_key, info in _VARIANT_MAP["variants"].items():
