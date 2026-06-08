@@ -54,6 +54,8 @@ async def list_variants():
 
 @app.post("/inspect", tags=["inspection"])
 async def inspect(file: UploadFile = File(...)):
+    import asyncio
+
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image.")
 
@@ -68,14 +70,14 @@ async def inspect(file: UploadFile = File(...)):
     t0 = time.perf_counter()
 
     try:
-        ocr_result = run_ocr(image_bytes)
+        ocr_result = await asyncio.to_thread(run_ocr, image_bytes)
         logger.info("OCR: %s", ocr_result)
     except Exception as e:
         logger.exception("OCR failed")
         raise HTTPException(status_code=500, detail=f"OCR error: {e}")
 
     try:
-        det_result = run_detection(image_bytes)
+        det_result = await asyncio.to_thread(run_detection, image_bytes)
         logger.info("Detection: %s", det_result)
     except FileNotFoundError as e:
         raise HTTPException(status_code=503, detail=str(e))
