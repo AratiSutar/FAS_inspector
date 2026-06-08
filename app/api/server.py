@@ -39,14 +39,14 @@ async def health():
 
 @app.get("/variants", tags=["system"])
 async def list_variants():
-    from app.ocr.engine import _VARIANT_MAP
+    from config.variant_loader import VARIANT_MAP
     return {
         k: {
             "display_name": v["display_name"],
             "ocr_tokens": v["ocr_tokens"],
             "shape_class": v["shape_class"],
         }
-        for k, v in _VARIANT_MAP["variants"].items()
+        for k, v in VARIANT_MAP["variants"].items()
     }
 
 
