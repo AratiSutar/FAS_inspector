@@ -108,7 +108,19 @@ def verify(ocr_result: OCRResult, det_result: DetectionResult) -> VerificationRe
             all_detections=det_result.all_predictions,
         )
 
-    expected_shape = _VARIANT_MAP["variants"][ocr_variant]["shape_class"]
+    variant_info = _VARIANT_MAP["variants"].get(ocr_variant)
+    if variant_info is None:
+        return VerificationResult(
+            status=VerificationStatus.NO_CODE,
+            ocr_variant=ocr_variant,
+            detected_shape=det_class,
+            ocr_confidence=ocr_conf,
+            detector_confidence=det_conf,
+            message=f"OCR token '{ocr_variant}' not found in variant map.",
+            raw_ocr_texts=ocr_result.raw_texts,
+            all_detections=det_result.all_predictions,
+        )
+    expected_shape = variant_info["shape_class"]
 
     if expected_shape == det_class:
         status = VerificationStatus.MATCH
