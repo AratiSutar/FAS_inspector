@@ -31,7 +31,6 @@ def _get_ocr():
                 use_angle_cls=settings.ocr_use_angle_cls,
                 lang=settings.ocr_lang,
                 use_gpu=settings.ocr_use_gpu,
-                show_log=False,
             )
             logger.info("PaddleOCR initialized")
         except ImportError:
