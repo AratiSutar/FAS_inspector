@@ -62,7 +62,7 @@ def run_ocr(source) -> OCRResult:
     processed = preprocess_for_ocr(img)
 
     ocr = _get_ocr()
-    result = ocr.ocr(processed, cls=settings.ocr_use_angle_cls)
+    result = ocr.ocr(processed)
 
     raw_texts: list[str] = []
     confidences: dict[str, float] = {}
