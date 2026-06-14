@@ -75,15 +75,24 @@ def run_ocr(source) -> OCRResult:
                 continue
             for line in page:
                 try:
-                    if isinstance(line[1], (list, tuple)):
-                        text, conf = line[1]
-                    elif isinstance(line[1], str):
-                        text = line[1]
-                        conf = 1.0
+                    # PaddleOCR 3.x: line is dict with 'text' and 'score'
+                    if isinstance(line, dict):
+                        text = str(line.get("text", ""))
+                        conf = float(line.get("score", 1.0))
+                    # PaddleOCR 2.x: line is [bbox, (text, conf)]
+                    elif isinstance(line, (list, tuple)) and len(line) >= 2:
+                        if isinstance(line[1], (list, tuple)):
+                            text, conf = line[1]
+                            text = str(text)
+                            conf = float(conf)
+                        else:
+                            text = str(line[1])
+                            conf = 1.0
                     else:
                         continue
-                    raw_texts.append(str(text))
-                    confidences[str(text)] = float(conf)
+                    if text.strip():
+                        raw_texts.append(text)
+                        confidences[text] = conf
                 except Exception:
                     continue
 
