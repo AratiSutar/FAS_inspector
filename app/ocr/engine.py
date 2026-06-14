@@ -69,12 +69,23 @@ def run_ocr(source) -> OCRResult:
     raw_texts: list[str] = []
     confidences: dict[str, float] = {}
 
-    if result and result[0]:
-        for line in result[0]:
-            if line and len(line) >= 2:
-                text, conf = line[1]
-                raw_texts.append(text)
-                confidences[text] = float(conf)
+    if result:
+        for page in result:
+            if not page:
+                continue
+            for line in page:
+                try:
+                    if isinstance(line[1], (list, tuple)):
+                        text, conf = line[1]
+                    elif isinstance(line[1], str):
+                        text = line[1]
+                        conf = 1.0
+                    else:
+                        continue
+                    raw_texts.append(str(text))
+                    confidences[str(text)] = float(conf)
+                except Exception:
+                    continue
 
     logger.debug("OCR raw texts: %s", raw_texts)
 
