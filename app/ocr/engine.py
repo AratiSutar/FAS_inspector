@@ -26,6 +26,9 @@ def _get_ocr():
     global _paddle_ocr
     if _paddle_ocr is None:
         try:
+            import os
+            os.environ["FLAGS_use_mkldnn"] = "0"
+            os.environ["PADDLE_DISABLE_ONEDNN"] = "1"
             from paddleocr import PaddleOCR
             _paddle_ocr = PaddleOCR(
                 use_angle_cls=settings.ocr_use_angle_cls,
@@ -35,7 +38,6 @@ def _get_ocr():
         except ImportError:
             raise RuntimeError("Run: pip install paddleocr paddlepaddle")
     return _paddle_ocr
-
 
 class OCRResult:
     def __init__(self, raw_texts: list[str], matched_variant: Optional[str],
